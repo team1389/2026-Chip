@@ -20,10 +20,12 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.command.RunIndexer;
+import frc.command.RunShoot;
 import frc.robot.RobotMap.OperatorConstants;
-import frc.subsystems.*;
 import java.io.File;
 import swervelib.SwerveInputStream;
+import frc.subsystems.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -38,7 +40,7 @@ public class OI
   // The robot's subsystems and commands are defined here...
   private final swerveSubsystem       drivebase  = new swerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                                 "swerve"));
-
+  private final shooterSubsystem shooterSubsystem = new shooterSubsystem();
   // Establish a Sendable Chooser that will be able to be sent to the SmartDashboard, allowing selection of desired auto
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
@@ -184,7 +186,8 @@ public class OI
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.rightBumper().onTrue(Commands.none());
     }
-
+    driverXbox.leftTrigger().whileTrue(new RunIndexer(shooterSubsystem));
+    driverXbox.rightTrigger().whileTrue(new RunShoot(shooterSubsystem));
   }
 
   /**
